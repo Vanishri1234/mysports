@@ -1,0 +1,277 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Playalong</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/global.css' %}" rel="stylesheet">
+    <link href="{% static 'css/index.css' %}" rel="stylesheet">
+    <link href="{% static 'css/element.css' %}" rel="stylesheet">
+    <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Alata&display=swap" rel="stylesheet">
+    <script src="{% static 'js/jquery-2.1.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/ekko-lightbox.js' %}"></script>
+</head>
+
+<body data-spy="scroll" data-target=".navbar" data-offset="50">
+
+    <section id="header">
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header page-scroll">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="index.html"><i class="fa fa-trophy"></i> <span class="col">MY SPORTS</span> Team</a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle m_tag" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Enquiry <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'enquiry_form' %}" class="pl-4">Enquiry Form</a></li>
+                                <li><a href="{% url 'enquiry_list' %}" class="pl-4">Enquiry List</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle m_tag" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admission <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'register' %}" class="pl-4">Admission Form</a></li>
+                                <li><a href="{% url 'admission_list' %}" class="pl-4">Admission List</a></li>
+                                <li><a href="{% url 'sessions' %}" class="pl-4">Add Sessions</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle m_tag" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Coach <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'coach_reg' %}" class="pl-4">Coach Registration</a></li>
+                                <li><a href="{% url 'player_name' %}" class="pl-4">Coach Allocation</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle m_tag" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Stock <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'kit_entry' %}" class="pl-4">Kit Entry</a></li>
+                                <li><a href="{% url 'kit_list' %}" class="pl-4">Kit List</a></li>
+                                <li><a href="{% url 'item_entry' %}" class="pl-4">Item Entry</a></li>
+                                <li><a href="{% url 'item_list' %}" class="pl-4">Item List</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle m_tag" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Distribution <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'kit_dist' %}" class="pl-4">Kit Distribution</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+            <!-- /.container-fluid -->
+        </nav>
+    </section>
+    <br><br><br><br>
+
+<body>
+    <div class="container">
+        <h2 class="text-center mb-4">Kit Distribution</h2>
+        <form method="get" action="{% url 'player_details' %}" class="mb-4">
+            <div class="form-group row">
+                <label for="selectCustomer" class="col-sm-2 col-form-label form-label">Select player name:</label>
+                <div class="col-sm-5">
+                    <select id="selectCustomer" name="name" class="form-control" onchange="this.form.submit()">
+                        <option value="">Select a Player</option>
+                        {% for admission in admissions %}
+                            <option value="{{ admission.id }}" {% if selected_player and selected_player.id == admission.id %}selected{% endif %}>{{ admission.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </form>
+
+        {% if selected_player %}
+        <form method="post" action="{% url 'kit_distribution_view' %}">
+            {% csrf_token %}
+            <input type="hidden" name="selectCustomer" value="{{ selected_player.id }}">
+            <div class="row">
+                <div class="col-md-2 mb-4">
+                    <label for="admission_no" class="form-label">Admission No:</label>
+                    <input type="text" id="admission_no" name="admission_no" class="form-control" value="{{ selected_player.admission_no }}" readonly>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <label for="phone" class="form-label">Mobile Number:</label>
+                    <input type="text" id="phone" name="phone" class="form-control" value="{{ selected_player.phone }}" readonly>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <label for="adhar" class="form-label">Adhar No:</label>
+                    <input type="text" id="adhar" name="adhar" class="form-control" value="{{ selected_player.adhar }}" readonly>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <label for="place" class="form-label">Place:</label>
+                    <input type="text" id="place" name="place" class="form-control" value="{{ selected_player.place }}" readonly>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <label for="address" class="form-label">Address:</label>
+                    <input type="text" id="address" name="address" class="form-control" value="{{ selected_player.address }}" readonly>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <label for="package" class="form-label">Package:</label>
+                    <input type="text" id="package" name="package" class="form-control" value="{{ selected_player.package }}" readonly>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <label for="sessions" class="form-label">Sessions:</label>
+                    <input type="text" id="sessions" name="sessions" class="form-control" value="{{ selected_player.sessions }}" readonly>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <label for="batchtime" class="form-label">Batchtime:</label>
+                    <input type="text" id="batchtime" name="batchtime" class="form-control" value="{{ selected_player.batchtime }}" readonly>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <label for="totalAmount" class="form-label">Total Amount:</label>
+                    <input type="text" id="totalAmount" name="totalAmount" class="form-control" value="{{ selected_player.totalAmount }}" readonly>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <label for="balance" class="form-label">Balance:</label>
+                    <input type="text" id="balance" name="balance" class="form-control" value="{{ selected_player.balance }}" readonly>
+                </div>
+                <div class="col-md-12 mb-4 text-center">
+                    <button type="button" class="btn btn-primary" onclick="showSection('kitSection')">Select Kit</button>
+                    <button type="button" class="btn btn-primary" onclick="showSection('itemSection')">Add Item</button>
+                </div>
+            </div>
+
+            <!-- Kit Section -->
+            <div id="kitSection" class="hidden">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="kit" class="form-label">Select Kit:</label>
+                        <select id="kit" name="kit_id" class="form-control" onchange="fetchKitDetails()">
+                            <option value="">Select a Kit</option>
+                            {% for kit in kits %}
+                                <option value="{{ kit.brand_name }}" data-price="{{ kit.unit_price }}" data-stock="{{ kit.no_of_stock }}">{{ kit.brand_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div id="kitList" class="hidden">
+                    <div id="kitListContainer"></div>
+                    <div id="kitQuantitySection" class="hidden mb-3">
+                        <label for="kit_quantity" class="form-label">Quantity:</label>
+                        <input type="number" id="kit_quantity" name="kit_quantity" class="form-control" oninput="calculateKitTotalPrice()">
+                        <p id="kitTotalPrice" name="kitTotalPrice" class="mt-2">Total Price: 0.00</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item Section -->
+            <div id="itemSection" class="hidden">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="item" class="form-label">Select Item:</label>
+                        <select id="item" name="item_id" class="form-control" onchange="fetchItemDetails()">
+                            <option value="">Select an Item</option>
+                            {% for item in items %}
+                                <option value="{{ item.id }}" data-price="{{ item.price }}" data-stock="{{ item.pieces }}">{{ item.itemname }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div id="itemList" class="hidden">
+                    <div id="itemListContainer"></div>
+                    <div id="itemQuantitySection" class="hidden mb-3">
+                        <label for="item_quantity" class="form-label">Quantity:</label>
+                        <input type="number" id="item_quantity" name="item_quantity" class="form-control" oninput="calculateItemTotalPrice()">
+                        <p id="itemTotalPrice" class="mt-2">Total Price: 0.00</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Amount Section -->
+            <div id="finalAmountSection" class="final-amount">
+                <h3>Final Amount Calculation</h3>
+                <p>Balance: <span id="balanceAmount">{{ selected_player.balance }}</span></p>
+                <p>Kit Total Price: <span id="kitTotalAmount" name="kitTotalAmount">0.00</span></p>
+                <p>Item Total Price: <span id="itemTotalAmount" nama="itemTotalAmount">0.00</span></p>
+                <p><strong>Final Amount: <span id="finalAmount" name="finalAmount">0.00</span></strong></p>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+        {% endif %}
+    </div>
+<script>
+    let kitTotalPrice = 0;
+    let itemTotalPrice = 0;
+
+    function showSection(sectionId) {
+        document.querySelectorAll('.hidden').forEach(el => el.classList.add('hidden'));
+        document.getElementById(sectionId).classList.remove('hidden');
+    }
+
+    function fetchKitDetails() {
+        const kitSelect = document.getElementById('kit');
+        const selectedOption = kitSelect.options[kitSelect.selectedIndex];
+        const price = parseFloat(selectedOption.getAttribute('data-price'));
+        const stock = parseInt(selectedOption.getAttribute('data-stock'));
+
+        if (selectedOption.value) {
+            document.getElementById('kitList').classList.remove('hidden');
+            document.getElementById('kitQuantitySection').classList.remove('hidden');
+        } else {
+            document.getElementById('kitList').classList.add('hidden');
+            document.getElementById('kitQuantitySection').classList.add('hidden');
+        }
+    }
+
+    function calculateKitTotalPrice() {
+        const quantity = parseInt(document.getElementById('kit_quantity').value) || 0;
+        const price = parseFloat(document.querySelector('#kit option:checked').getAttribute('data-price')) || 0;
+        kitTotalPrice = quantity * price;
+        document.getElementById('kitTotalPrice').textContent = `Total Price: ${kitTotalPrice.toFixed(2)}`;
+        updateFinalAmount();
+    }
+
+    function fetchItemDetails() {
+        const itemSelect = document.getElementById('item');
+        const selectedOption = itemSelect.options[itemSelect.selectedIndex];
+        const price = parseFloat(selectedOption.getAttribute('data-price'));
+        const stock = parseInt(selectedOption.getAttribute('data-stock'));
+
+        if (selectedOption.value) {
+            document.getElementById('itemList').classList.remove('hidden');
+            document.getElementById('itemQuantitySection').classList.remove('hidden');
+        } else {
+            document.getElementById('itemList').classList.add('hidden');
+            document.getElementById('itemQuantitySection').classList.add('hidden');
+        }
+    }
+
+    function calculateItemTotalPrice() {
+        const quantity = parseInt(document.getElementById('item_quantity').value) || 0;
+        const price = parseFloat(document.querySelector('#item option:checked').getAttribute('data-price')) || 0;
+        itemTotalPrice = quantity * price;
+        document.getElementById('itemTotalPrice').textContent = `Total Price: ${itemTotalPrice.toFixed(2)}`;
+        updateFinalAmount();
+    }
+
+    function updateFinalAmount() {
+        const balance = parseFloat(document.getElementById('balanceAmount').textContent) || 0;
+        const finalAmount = balance + kitTotalPrice + itemTotalPrice;
+        document.getElementById('kitTotalAmount').textContent = kitTotalPrice.toFixed(2);
+        document.getElementById('itemTotalAmount').textContent = itemTotalPrice.toFixed(2);
+        document.getElementById('finalAmount').textContent = finalAmount.toFixed(2);
+    }
+</script>
+</body>
+</html>
